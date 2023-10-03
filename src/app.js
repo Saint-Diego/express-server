@@ -4,12 +4,17 @@ const app = express();
 const listViewRouter = require("./routes/list-view-router");
 const listEditRouter = require("./routes/list-edit-router");
 
+const methods = ["GET", "POST", "PUT", "DELETE"];
+
 app.use(express.json());
-app.use([listViewRouter, listEditRouter]);
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "*");
   next();
 });
+app.use((req, res, next) => {
+  if (methods.includes(req.method)) next();
+  else res.status(400).json({ error: "Método http no válido" });
+});
+app.use([listViewRouter, listEditRouter]);
 
 module.exports = app;
